@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/HomeFragment"
+        android:icon="@drawable/baseline_home_24"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/MapFragment"
+        android:icon="@drawable/baseline_location_on_24"
+        android:title="@string/map" />
+    <item
+        android:id="@+id/FavoriteFragment"
+        android:icon="@drawable/baseline_favorite_24"
+        android:title="@string/favorite" />
+    <item
+        android:id="@+id/MyPageFragment"
+        android:icon="@drawable/baseline_person_24"
+        android:title="@string/mypage" />
+</menu>
