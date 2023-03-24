@@ -6,25 +6,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/tv_welcome_message"
+            android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:text="인천 속 맛집으로의 여행 😊"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_subtitle"
+            android:id="@+id/txtSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/txtTitle"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:text="고민중이신가요? 내 주변 가게로 주문해보세요!"
@@ -34,8 +37,12 @@
             android:id="@+id/layoutTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_margin="10dp"
+            android:layout_below="@id/txtSubTitle"
+            android:layout_alignParentTop="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <EditText
@@ -47,7 +54,7 @@
                 android:ems="10"
                 android:hint="검색어 입력..."
                 android:inputType="textPersonName"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/imgSearch"
@@ -61,7 +68,7 @@
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_below="@id/layoutTop"
             android:orientation="horizontal">
 
             <RadioButton
@@ -69,7 +76,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
-                android:text="거리순" />
+                android:text="거리순"
+                android:textSize="14sp" />
 
             <RadioButton
                 android:id="@+id/radioRating"
@@ -91,8 +99,19 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp" />
+            android:layout_below="@id/radio_group"
+            android:layout_marginTop="8dp">
 
-    </LinearLayout>
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
 </FrameLayout>
