@@ -1,7 +1,5 @@
 package com.reodinas2.eatopiaapp;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.reodinas2.eatopiaapp.adapter.RestaurantAdapter;
@@ -102,6 +101,7 @@ public class HomeFragment extends Fragment {
     RadioButton radioRating;
     RadioButton radioReview;
     ProgressBar progressBar;
+    TextView txtNoResult;
 
     RecyclerView recyclerView;
     RestaurantAdapter adapter;
@@ -139,6 +139,7 @@ public class HomeFragment extends Fragment {
         radioRating = rootView.findViewById(R.id.radioRating);
         radioReview = rootView.findViewById(R.id.radioReview);
         progressBar = rootView.findViewById(R.id.progressBar);
+        txtNoResult = rootView.findViewById(R.id.txtNoResult);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -217,7 +218,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
+        checkLocationPermission();
 
 
         return rootView;
@@ -227,7 +228,6 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        checkLocationPermission();
 
     }
 
@@ -274,6 +274,13 @@ public class HomeFragment extends Fragment {
                     adapter = new RestaurantAdapter(getActivity(), restaurantArrayList);
 
                     recyclerView.setAdapter(adapter);
+
+                    // 검색결과가 없으면 텍스트뷰를 보이게
+                    if (restaurantArrayList.size() == 0) {
+                        txtNoResult.setVisibility(View.VISIBLE);
+                    }else {
+                        txtNoResult.setVisibility(View.GONE);;
+                    }
 
                 }else{
 

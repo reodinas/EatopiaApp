@@ -102,11 +102,22 @@
                 android:text="리뷰순" />
         </RadioGroup>
 
+        <TextView
+            android:id="@+id/txtNoResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroup"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="검색결과가 없습니다."
+            android:textSize="20sp"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/radioGroup"
+            android:layout_below="@id/txtNoResult"
             android:layout_marginTop="8dp">
 
         </androidx.recyclerview.widget.RecyclerView>

@@ -1,6 +1,7 @@
 package com.reodinas2.eatopiaapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.reodinas2.eatopiaapp.R;
+import com.reodinas2.eatopiaapp.RestaurantActivity;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 
 import java.util.ArrayList;
@@ -90,7 +92,18 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             txtCnt = itemView.findViewById(R.id.txtCnt);
             txtAddress = itemView.findViewById(R.id.txtAddress);
 
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int index = getAdapterPosition();
+                    Restaurant restaurant = restaurantArrayList.get(index);
 
+                    Intent intent = new Intent(context, RestaurantActivity.class);
+                    intent.putExtra("restaurant", restaurant);
+                    context.startActivity(intent);
+
+                }
+            });
 
         }
 

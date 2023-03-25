@@ -1,6 +1,8 @@
 package com.reodinas2.eatopiaapp.model;
 
-public class Restaurant {
+import java.io.Serializable;
+
+public class Restaurant implements Serializable {
     private int id;
     private String name;
     private String category;

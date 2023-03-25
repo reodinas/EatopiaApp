@@ -48,4 +48,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 
     implementation 'commons-io:commons-io:2.4'
+    // 탭레이아웃 사용을 위한 의존성
+    implementation 'com.google.android.material:material:1.4.0'
 }
