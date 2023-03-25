@@ -52,14 +52,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         holder.txtAddress.setText(address);
 
         String imgUrl = restaurant.getImgUrl();
-        if (imgUrl != null) {
-            Glide.with(context)
-                    .load(restaurant.getImgUrl())
+        Glide.with(context)
+                    .load(imgUrl)
                     .placeholder(R.drawable.baseline_image_24)
                     .centerCrop()
                     .error(R.drawable.baseline_image_24)
                     .into(holder.imgRestaurant);
-        }
+
 
     }
 

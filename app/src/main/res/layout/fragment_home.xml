@@ -62,10 +62,17 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 app:srcCompat="@drawable/baseline_search_24" />
+
+            <ImageView
+                android:id="@+id/imgDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/baseline_close_24" />
         </LinearLayout>
 
         <RadioGroup
-            android:id="@+id/radio_group"
+            android:id="@+id/radioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/layoutTop"
@@ -99,7 +106,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/radio_group"
+            android:layout_below="@id/radioGroup"
             android:layout_marginTop="8dp">
 
         </androidx.recyclerview.widget.RecyclerView>

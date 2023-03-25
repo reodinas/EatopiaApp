@@ -1,11 +1,21 @@
 package com.reodinas2.eatopiaapp;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.reodinas2.eatopiaapp.adapter.RestaurantAdapter;
@@ -85,6 +96,8 @@ public class HomeFragment extends Fragment {
     // 멤버변수
     EditText editKeyword;
     ImageView imgSearch;
+    ImageView imgDelete;
+    RadioGroup radioGroup;
     RadioButton radioDistance;
     RadioButton radioRating;
     RadioButton radioReview;
@@ -98,10 +111,18 @@ public class HomeFragment extends Fragment {
     int count = 0;
     int offset = 0;
     int limit = 20;
+    // 현재 위도, 경도
     Double lat;
     Double lng;
-    String order = "distance";
+    // 식당리스트를 가져올 당시의 위도,경도
+    Double latAtSearch;
+    Double lngAtSearch;
+    String order = "dist";
     String keyword = "";
+
+    LocationManager locationManager;
+    LocationListener locationListener;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
 
     @Override
@@ -112,6 +133,8 @@ public class HomeFragment extends Fragment {
 
         editKeyword = rootView.findViewById(R.id.editKeyword);
         imgSearch = rootView.findViewById(R.id.imgSearch);
+        imgDelete = rootView.findViewById(R.id.imgDelete);
+        radioGroup = rootView.findViewById(R.id.radioGroup);
         radioDistance = rootView.findViewById(R.id.radioDistance);
         radioRating = rootView.findViewById(R.id.radioRating);
         radioReview = rootView.findViewById(R.id.radioReview);
@@ -120,12 +143,12 @@ public class HomeFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // 리사이클러뷰 페이징처리
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
-
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -141,6 +164,61 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // locationManager 및 locationListener 초기화
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                lat = location.getLatitude();
+                lng = location.getLongitude();
+                Log.i("myLocation", "위도 : " + lat);
+                Log.i("myLocation", "경도 : " + lng);
+
+            }
+        };
+
+        // 검색
+        imgSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keyword = editKeyword.getText().toString().trim();
+                getNetworkData();
+            }
+        });
+
+        // 검색어 삭제
+        imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editKeyword.setText("");
+                keyword = editKeyword.getText().toString().trim();
+                getNetworkData();
+            }
+        });
+
+        // RadioGroup 체크 기본값
+        radioDistance.setChecked(true);
+        // RadioGroup의 OnCheckedChangeListener를 설정.
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioDistance:
+                        order = "dist";
+                        break;
+                    case R.id.radioRating:
+                        order = "avg";
+                        break;
+                    case R.id.radioReview:
+                        order = "cnt";
+                        break;
+                }
+                getNetworkData();
+            }
+        });
+
+
+
 
         return rootView;
     }
@@ -149,7 +227,15 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getNetworkData();
+        checkLocationPermission();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        stopLocationUpdates();
     }
 
     public void getNetworkData(){
@@ -159,18 +245,17 @@ public class HomeFragment extends Fragment {
 
         RestaurantApi api = retrofit.create(RestaurantApi.class);
 
+        // 오프셋 초기화
         offset = 0;
 
-        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, Context.MODE_PRIVATE); // 또는 getActivity().MODE_PRIVATE
+//        SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, Context.MODE_PRIVATE); // 또는 getActivity().MODE_PRIVATE
 //        String accessToken = sp.getString(Config.ACCESS_TOKEN, "");
 //        String token = "Bearer " + accessToken;
 
-        lat = 37.543;
-        lng = 126.6772;
-        order = "distance";
-        keyword = "";
+        latAtSearch = lat;
+        lngAtSearch = lng;
 
-        Call<RestaurantList> call = api.getRestaurantList(lat, lng, offset, limit, order, keyword);
+        Call<RestaurantList> call = api.getRestaurantList(latAtSearch, lngAtSearch, offset, limit, order, keyword);
 
         call.enqueue(new Callback<RestaurantList>() {
             @Override
@@ -191,8 +276,7 @@ public class HomeFragment extends Fragment {
                     recyclerView.setAdapter(adapter);
 
                 }else{
-                    Log.e("LOGCAT", response.body().getError());
-                    Log.e("LOGCAT", response.body().getMessage());
+
                 }
             }
 
@@ -216,7 +300,7 @@ public class HomeFragment extends Fragment {
 
 //        String token = "Bearer " + accessToken;
 
-        Call<RestaurantList> call = api.getRestaurantList(lat, lng, offset, limit, order, keyword);
+        Call<RestaurantList> call = api.getRestaurantList(latAtSearch, lngAtSearch, offset, limit, order, keyword);
 
         call.enqueue(new Callback<RestaurantList>() {
             @Override
@@ -234,8 +318,7 @@ public class HomeFragment extends Fragment {
 
                 } else{
                     Toast.makeText(getActivity(), "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
-                    Log.e("LOGCAT", response.body().getError());
-                    Log.e("LOGCAT", response.body().getMessage());
+
                 }
 
             }
@@ -248,5 +331,61 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            Toast.makeText(getActivity(), "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
+        } else {
+            setInitialLocation();
+            startLocationUpdates();
+            getNetworkData();
+        }
+    }
+
+    private void setInitialLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                lat = lastKnownLocation.getLatitude();
+                lng = lastKnownLocation.getLongitude();
+                Log.i("myLocation", "초기 위도 : " + lat);
+                Log.i("myLocation", "초기 경도 : " + lng);
+            }
+        }
+    }
+
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 3, locationListener);
+        }
+    }
+
+
+    private void stopLocationUpdates() {
+        locationManager.removeUpdates(locationListener);
+    }
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한이 허용되었을 때 위치 업데이트 시작
+                setInitialLocation();
+                startLocationUpdates();
+                getNetworkData();
+
+            } else {
+                Toast.makeText(getActivity(), "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 }
