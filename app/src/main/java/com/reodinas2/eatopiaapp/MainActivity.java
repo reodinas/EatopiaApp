@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     Fragment favoriteFragment;
     Fragment myPageFragment;
     BottomNavigationView navigationView;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    public MutableLiveData<Boolean> permissionGranted = new MutableLiveData<>();
 
 
 
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 회원가입/로그인 유저면, 아래 코드를 실행하도록 둔다.
 
+        checkLocationPermission();
 
         // 프래그먼트 연결
         navigationView = findViewById(R.id.bottomNavigationView);
@@ -123,6 +127,31 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }else {
             return false;
+        }
+    }
+
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+//            Toast.makeText(MainActivity.this, "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
+        }else {
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                permissionGranted.setValue(true);
+            } else {
+                Toast.makeText(MainActivity.this, "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
+                permissionGranted.setValue(false);
+                checkLocationPermission();
+            }
         }
     }
 

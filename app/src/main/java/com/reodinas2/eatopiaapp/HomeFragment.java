@@ -12,13 +12,17 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.reodinas2.eatopiaapp.adapter.RestaurantAdapter;
 import com.reodinas2.eatopiaapp.api.NetworkClient;
 import com.reodinas2.eatopiaapp.api.RestaurantApi;
@@ -39,6 +50,7 @@ import com.reodinas2.eatopiaapp.model.Restaurant;
 import com.reodinas2.eatopiaapp.model.RestaurantList;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,10 +131,12 @@ public class HomeFragment extends Fragment {
     Double lngAtSearch;
     String order = "dist";
     String keyword = "";
+    private static final float DISTANCE_THRESHOLD = 50; // 원하는 거리 임계값(50m)
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
-    LocationManager locationManager;
-    LocationListener locationListener;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
 
 
     @Override
@@ -165,18 +179,38 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // locationManager 및 locationListener 초기화
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                lat = location.getLatitude();
-                lng = location.getLongitude();
-                Log.i("myLocation", "위도 : " + lat);
-                Log.i("myLocation", "경도 : " + lng);
 
+        // fusedLocationClient 초기화
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+
+
+        // 위치 업데이트 요청 설정
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000); // 10초마다 위치 업데이트
+        locationRequest.setFastestInterval(5000); // 최소 5초마다 위치 업데이트
+
+        // 위치 정보를 받을 때 동작할 콜백 설정
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        lat = location.getLatitude();
+                        lng = location.getLongitude();
+                        Log.i("myLocation", "위도 : " + lat);
+                        Log.i("myLocation", "경도 : " + lng);
+                    }
+                }
             }
         };
+
+        setInitialLocation();
+
 
         // 검색
         imgSearch.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +218,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 keyword = editKeyword.getText().toString().trim();
                 getNetworkData();
+
             }
         });
 
@@ -194,6 +229,7 @@ public class HomeFragment extends Fragment {
                 editKeyword.setText("");
                 keyword = editKeyword.getText().toString().trim();
                 getNetworkData();
+
             }
         });
 
@@ -218,16 +254,43 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        checkLocationPermission();
+
 
 
         return rootView;
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity) getActivity()).permissionGranted.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean granted) {
+                if (granted) {
+                    // 권한이 승인되었을 때 수행할 작업
+                    setInitialLocation();
+                }else{
+                    // 권한이 거부되었을 때 수행할 작업
+                }
+            }
+        });
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        startLocationUpdates();
 
+        if (latAtSearch != null && lngAtSearch != null && lat != null && lng != null) {
+            float[] results = new float[1];
+            Location.distanceBetween(latAtSearch, lngAtSearch, lat, lng, results);
+            float distance = results[0];
+
+            if (distance >= DISTANCE_THRESHOLD) {
+                getNetworkData();
+            }
+        }
 
     }
 
@@ -340,59 +403,47 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-            Toast.makeText(getActivity(), "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
-        } else {
-            setInitialLocation();
-            startLocationUpdates();
-            getNetworkData();
-        }
-    }
+
 
     private void setInitialLocation() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnownLocation != null) {
-                lat = lastKnownLocation.getLatitude();
-                lng = lastKnownLocation.getLongitude();
-                Log.i("myLocation", "초기 위도 : " + lat);
-                Log.i("myLocation", "초기 경도 : " + lng);
-            }
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+
+        int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        fusedLocationClient.getCurrentLocation(priority, cancellationTokenSource.getToken())
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            lat = location.getLatitude();
+                            lng = location.getLongitude();
+                            Log.i("myLocation", "초기 위치: 위도 = " + lat + ", 경도 = " + lng);
+
+                            getNetworkData();
+                        }
+                    }
+                });
+
     }
 
     private void startLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 3, locationListener);
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
-
 
     private void stopLocationUpdates() {
-        locationManager.removeUpdates(locationListener);
+        fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
 
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 권한이 허용되었을 때 위치 업데이트 시작
-                setInitialLocation();
-                startLocationUpdates();
-                getNetworkData();
-
-            } else {
-                Toast.makeText(getActivity(), "위치권한을 허용하지 않으면 앱을 사용하실 수 없습니다.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
 
 }
