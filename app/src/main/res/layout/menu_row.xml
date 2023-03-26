@@ -9,85 +9,112 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/skyblue_border">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:background="@drawable/skyblue_border"
+            android:padding="3dp">
 
             <ImageView
                 android:id="@+id/imgMenu"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/baseline_image_24" />
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="110dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="8dp">
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtMenuName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="메뉴 이름"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    android:maxLines="2"
+                    android:text="메뉴 소개"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
-                    <TextView
-                        android:id="@+id/menuItemTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="음식 메뉴"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/menuItemDescription"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:gravity="end"
-                        android:maxLines="2"
-                        android:text="음식 소개"
-                        android:textSize="20sp" />
+                        android:orientation="horizontal">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:text="수량:"
+                            android:textSize="18sp" />
 
-                <!-- ... -->
+                        <ImageView
+                            android:id="@+id/imgMinus"
+                            android:layout_width="0dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="2"
+                            app:srcCompat="@drawable/minus" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/txtCount"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/imgPlus"
+                            android:layout_width="0dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="2"
+                            app:srcCompat="@drawable/plus" />
+                    </LinearLayout>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/txtPrice"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="메뉴 갯수: "
-                        android:textSize="16sp" />
-
-                    <NumberPicker
-                        android:id="@+id/menuCountPicker"
-                        android:layout_width="35dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp" />
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:paddingStart="8dp"
+                        android:text="10000원"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
 
-                <TextView
-                    android:id="@+id/menuItemPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:paddingStart="8dp"
-                    android:text="가격: ₩0"
-                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
