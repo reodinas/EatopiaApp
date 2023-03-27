@@ -141,10 +141,15 @@ public class RestaurantMenuFragment extends Fragment {
         btnOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<MenuInfo> menuInfoArrayList = adapter.getMenuInfoArrayList();
-                Intent intent = new Intent(getActivity(), OrderActivity.class);
-                intent.putExtra("menuInfoArrayList", menuInfoArrayList);
-                startActivity(intent);
+                ArrayList<Menu> selectedMenuList = adapter.getSelectedMenuList();
+                if (selectedMenuList.size() > 0) {
+                    Intent intent = new Intent(getActivity(), OrderActivity.class);
+                    intent.putExtra("restaurantId", restaurantId);
+                    intent.putParcelableArrayListExtra("selectedMenuList", selectedMenuList);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), "주문할 메뉴를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

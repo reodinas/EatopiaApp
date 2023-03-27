@@ -1,6 +1,11 @@
 package com.reodinas2.eatopiaapp.model;
 
-public class Menu {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class Menu implements Parcelable {
     private int id;
     private int restaurantId;
     private String menuName;
@@ -10,7 +15,57 @@ public class Menu {
     private String createdAt;
     private String updatedAt;
 
+    // 메뉴수량
+    private int count;
 
+    public Menu() {
+    }
+
+    // Parcelable 인터페이스 구현
+    protected Menu(Parcel in) {
+        id = in.readInt();
+        restaurantId = in.readInt();
+        menuName = in.readString();
+        price = in.readInt();
+        description = in.readString();
+        imgUrl = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        count = in.readInt();
+    }
+
+    public static final Creator<Menu> CREATOR = new Creator<Menu>() {
+        @Override
+        public Menu createFromParcel(Parcel in) {
+            return new Menu(in);
+        }
+
+        @Override
+        public Menu[] newArray(int size) {
+            return new Menu[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(restaurantId);
+        dest.writeString(menuName);
+        dest.writeInt(price);
+        dest.writeString(description);
+        dest.writeString(imgUrl);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeInt(count);
+    }
+
+
+    // getter/setter
     public int getId() {
         return id;
     }
@@ -74,4 +129,14 @@ public class Menu {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+
 }

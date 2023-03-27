@@ -15,22 +15,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.reodinas2.eatopiaapp.R;
 import com.reodinas2.eatopiaapp.model.Menu;
-import com.reodinas2.eatopiaapp.model.MenuInfo;
-import com.reodinas2.eatopiaapp.model.Restaurant;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     Context context;
-    ArrayList<Menu> MenuArrayList;
+    ArrayList<Menu> menuArrayList;
 
-    private ArrayList<MenuInfo> menuInfoArrayList = new ArrayList<>();
+    // 선택받은 메뉴를 저장할 새로운 어레이리스트
+    ArrayList<Menu> selectedMenuList;
+
 
     public MenuAdapter(Context context, ArrayList<Menu> menuArrayList) {
         this.context = context;
-        MenuArrayList = menuArrayList;
+        this.menuArrayList = menuArrayList;
+        this.selectedMenuList = new ArrayList<>(); // selectedMenuList 초기화
     }
 
     @NonNull
@@ -44,7 +44,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        Menu menu = MenuArrayList.get(position);
+        Menu menu = menuArrayList.get(position);
 
         holder.txtMenuName .setText(menu.getMenuName());
         if (menu.getDescription() == null){
@@ -74,10 +74,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                 count+=1;
                 holder.txtCount.setText(String.valueOf(count));
 
-                updateMenuInfo(menu, count);
+                updateSelectedMenuList(menu, count);
 
-                Log.i("updateMenuInfo", "id: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getMenuId()+
-                        ", 수량: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getCount());
+                Log.i("updateSelectedMenuList", "menuName: " + selectedMenuList.get(selectedMenuList.size()-1).getMenuName());
+                Log.i("updateSelectedMenuList", "count: " + selectedMenuList.get(selectedMenuList.size()-1).getCount());
             }
         });
 
@@ -89,10 +89,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     count-=1;
                     holder.txtCount.setText(String.valueOf(count));
 
-                    updateMenuInfo(menu, count);
+                    updateSelectedMenuList(menu, count);
 
-                    Log.i("updateMenuInfo", "id: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getMenuId()+
-                            ", 수량: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getCount());
+                    Log.i("updateSelectedMenuList", "menuName: " + selectedMenuList.get(selectedMenuList.size()-1).getMenuName());
+                    Log.i("updateSelectedMenuList", "count: " + selectedMenuList.get(selectedMenuList.size()-1).getCount());
                 }
             }
         });
@@ -100,18 +100,19 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return MenuArrayList.size();
+        return menuArrayList.size();
     }
 
-    private void updateMenuInfo(Menu menu, int count) {
+
+    private void updateSelectedMenuList(Menu menu, int count) {
         boolean itemExists = false;
 
-        for (MenuInfo menuInfo : menuInfoArrayList) {
-            if (menuInfo.getMenuId() == menu.getId()) {
+        for (Menu selectedMenu : selectedMenuList) {
+            if (selectedMenu.getId() == menu.getId()) {
                 if (count == 0) {
-                    menuInfoArrayList.remove(menuInfo);
+                    selectedMenuList.remove(selectedMenu);
                 } else {
-                    menuInfo.setCount(count);
+                    selectedMenu.setCount(count);
                 }
                 itemExists = true;
                 break;
@@ -119,15 +120,20 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         }
 
         if (!itemExists && count > 0) {
-            MenuInfo newMenuInfo = new MenuInfo();
-            newMenuInfo.setMenuId(menu.getId());
-            newMenuInfo.setCount(count);
-            menuInfoArrayList.add(newMenuInfo);
+            Menu selectedMenu = new Menu();
+            selectedMenu.setId(menu.getId());
+            selectedMenu.setRestaurantId(menu.getRestaurantId());
+//            selectedMenu.setMenuName(menu.getMenuName());
+//            selectedMenu.setPrice(menu.getPrice());
+//            selectedMenu.setDescription(menu.getDescription());
+//            selectedMenu.setImgUrl(menu.getImgUrl());
+            selectedMenu.setCount(count);
+            selectedMenuList.add(selectedMenu);
         }
     }
 
-    public ArrayList<MenuInfo> getMenuInfoArrayList() {
-        return menuInfoArrayList;
+    public ArrayList<Menu> getSelectedMenuList() {
+        return selectedMenuList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -148,7 +154,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             imgMenu = itemView.findViewById(R.id.imgMenu);
             txtMenuName = itemView.findViewById(R.id.txtMenuName);
             txtDescription = itemView.findViewById(R.id.txtDescription);
-            txtCount = itemView.findViewById(R.id.txtCount);
+            txtCount = itemView.findViewById(R.id.txtPeople);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             imgMinus = itemView.findViewById(R.id.imgMinus);
             imgPlus = itemView.findViewById(R.id.imgPlus);

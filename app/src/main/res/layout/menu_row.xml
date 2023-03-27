@@ -98,7 +98,7 @@
                             app:srcCompat="@drawable/minus" />
 
                         <TextView
-                            android:id="@+id/txtCount"
+                            android:id="@+id/txtPeople"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
