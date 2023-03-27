@@ -70,10 +70,10 @@
                         android:id="@+id/txtPrice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text="10000원"
-                        android:textSize="18sp" />
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -87,17 +87,34 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:text="수량:  "
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/imgMinus"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            app:srcCompat="@drawable/minus" />
 
                         <TextView
                             android:id="@+id/txtCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:gravity="center_vertical"
+                            android:gravity="center"
                             android:text="0"
                             android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/imgPlus"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            app:srcCompat="@drawable/plus" />
 
                     </LinearLayout>
 

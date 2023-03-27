@@ -22,6 +22,7 @@ import com.reodinas2.eatopiaapp.adapter.RestaurantAdapter;
 import com.reodinas2.eatopiaapp.api.NetworkClient;
 import com.reodinas2.eatopiaapp.api.RestaurantApi;
 import com.reodinas2.eatopiaapp.model.Menu;
+import com.reodinas2.eatopiaapp.model.MenuInfo;
 import com.reodinas2.eatopiaapp.model.MenuList;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 import com.reodinas2.eatopiaapp.model.RestaurantList;
@@ -98,7 +99,6 @@ public class RestaurantMenuFragment extends Fragment {
     int limit = 20;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -137,6 +137,16 @@ public class RestaurantMenuFragment extends Fragment {
         });
 
         getNetworkData();
+
+        btnOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<MenuInfo> menuInfoArrayList = adapter.getMenuInfoArrayList();
+                Intent intent = new Intent(getActivity(), OrderActivity.class);
+                intent.putExtra("menuInfoArrayList", menuInfoArrayList);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }

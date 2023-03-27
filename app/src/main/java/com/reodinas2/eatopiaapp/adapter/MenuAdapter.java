@@ -1,6 +1,7 @@
 package com.reodinas2.eatopiaapp.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.reodinas2.eatopiaapp.R;
 import com.reodinas2.eatopiaapp.model.Menu;
+import com.reodinas2.eatopiaapp.model.MenuInfo;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     Context context;
     ArrayList<Menu> MenuArrayList;
+
+    private ArrayList<MenuInfo> menuInfoArrayList = new ArrayList<>();
 
     public MenuAdapter(Context context, ArrayList<Menu> menuArrayList) {
         this.context = context;
@@ -62,11 +66,68 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                 .centerCrop()
                 .error(R.drawable.no_image)
                 .into(holder.imgMenu);
+
+        holder.imgPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int count = Integer.parseInt(holder.txtCount.getText().toString());
+                count+=1;
+                holder.txtCount.setText(String.valueOf(count));
+
+                updateMenuInfo(menu, count);
+
+                Log.i("updateMenuInfo", "id: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getMenuId()+
+                        ", 수량: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getCount());
+            }
+        });
+
+        holder.imgMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int count = Integer.parseInt(holder.txtCount.getText().toString());
+                if (count > 0) {
+                    count-=1;
+                    holder.txtCount.setText(String.valueOf(count));
+
+                    updateMenuInfo(menu, count);
+
+                    Log.i("updateMenuInfo", "id: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getMenuId()+
+                            ", 수량: "+menuInfoArrayList.get(menuInfoArrayList.size()-1).getCount());
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return MenuArrayList.size();
+    }
+
+    private void updateMenuInfo(Menu menu, int count) {
+        boolean itemExists = false;
+
+        for (MenuInfo menuInfo : menuInfoArrayList) {
+            if (menuInfo.getMenuId() == menu.getId()) {
+                if (count == 0) {
+                    menuInfoArrayList.remove(menuInfo);
+                } else {
+                    menuInfo.setCount(count);
+                }
+                itemExists = true;
+                break;
+            }
+        }
+
+        if (!itemExists && count > 0) {
+            MenuInfo newMenuInfo = new MenuInfo();
+            newMenuInfo.setMenuId(menu.getId());
+            newMenuInfo.setCount(count);
+            menuInfoArrayList.add(newMenuInfo);
+        }
+    }
+
+    public ArrayList<MenuInfo> getMenuInfoArrayList() {
+        return menuInfoArrayList;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -77,6 +138,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         TextView txtDescription;
         TextView txtCount;
         TextView txtPrice;
+        ImageView imgMinus;
+        ImageView imgPlus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +150,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             txtDescription = itemView.findViewById(R.id.txtDescription);
             txtCount = itemView.findViewById(R.id.txtCount);
             txtPrice = itemView.findViewById(R.id.txtPrice);
+            imgMinus = itemView.findViewById(R.id.imgMinus);
+            imgPlus = itemView.findViewById(R.id.imgPlus);
         }
     }
 }
