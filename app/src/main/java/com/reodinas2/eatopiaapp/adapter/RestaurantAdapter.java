@@ -58,7 +58,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                     .load(imgUrl)
                     .placeholder(R.drawable.baseline_image_24)
                     .centerCrop()
-                    .error(R.drawable.baseline_image_24)
+                    .error(R.drawable.no_image)
                     .into(holder.imgRestaurant);
 
 

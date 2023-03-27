@@ -49,6 +49,10 @@ import com.reodinas2.eatopiaapp.config.Config;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 import com.reodinas2.eatopiaapp.model.RestaurantList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -347,6 +351,16 @@ public class HomeFragment extends Fragment {
 
                 }else{
 
+                    Toast.makeText(getActivity(), "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        JSONObject errorJson = new JSONObject(response.errorBody().string());
+                        String errorMessage = errorJson.getString("error");
+                        Toast.makeText(getActivity(), "" + errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.i("LOGCAT", "에러 상태코드: " + response.code() + ", 메시지: " + errorMessage);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -388,6 +402,15 @@ public class HomeFragment extends Fragment {
 
                 } else{
                     Toast.makeText(getActivity(), "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        JSONObject errorJson = new JSONObject(response.errorBody().string());
+                        String errorMessage = errorJson.getString("error");
+                        Toast.makeText(getActivity(), "" + errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.i("LOGCAT", "에러 상태코드: " + response.code() + ", 메시지: " + errorMessage);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 
