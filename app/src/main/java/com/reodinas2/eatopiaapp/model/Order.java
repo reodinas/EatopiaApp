@@ -1,22 +1,37 @@
 package com.reodinas2.eatopiaapp.model;
 
-import java.util.List;
-
 public class Order {
+    private int id;
+    private int userId;
+    private int restaurantId;
     private int people;
     private String reservTime;
     private int type;
-    private List<Menu> menuInfo;
+    private String createdAt;
+    private int isVisited;
 
-
-    public Order() {
+    public int getId() {
+        return id;
     }
 
-    public Order(int people, String reservTime, int type, List<Menu> menuInfo) {
-        this.people = people;
-        this.reservTime = reservTime;
-        this.type = type;
-        this.menuInfo = menuInfo;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public int getPeople() {
@@ -43,11 +58,19 @@ public class Order {
         this.type = type;
     }
 
-    public List<Menu> getMenuInfo() {
-        return menuInfo;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setMenuInfo(List<Menu> menuInfo) {
-        this.menuInfo = menuInfo;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getIsVisited() {
+        return isVisited;
+    }
+
+    public void setIsVisited(int isVisited) {
+        this.isVisited = isVisited;
     }
 }

@@ -1,8 +1,12 @@
 package com.reodinas2.eatopiaapp.model;
 
+import java.util.List;
+
 public class OrderRes {
     private String result;
-    private int orderId;
+    private Order orderInfo;
+    private List<Menu> menuInfo;
+
 
     public String getResult() {
         return result;
@@ -12,11 +16,19 @@ public class OrderRes {
         this.result = result;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public Order getOrderInfo() {
+        return orderInfo;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrderInfo(Order orderInfo) {
+        this.orderInfo = orderInfo;
+    }
+
+    public List<Menu> getMenuInfo() {
+        return menuInfo;
+    }
+
+    public void setMenuInfo(List<Menu> menuInfo) {
+        this.menuInfo = menuInfo;
     }
 }

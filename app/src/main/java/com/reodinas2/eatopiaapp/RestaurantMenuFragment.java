@@ -22,7 +22,6 @@ import com.reodinas2.eatopiaapp.adapter.RestaurantAdapter;
 import com.reodinas2.eatopiaapp.api.NetworkClient;
 import com.reodinas2.eatopiaapp.api.RestaurantApi;
 import com.reodinas2.eatopiaapp.model.Menu;
-import com.reodinas2.eatopiaapp.model.MenuInfo;
 import com.reodinas2.eatopiaapp.model.MenuList;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 import com.reodinas2.eatopiaapp.model.RestaurantList;

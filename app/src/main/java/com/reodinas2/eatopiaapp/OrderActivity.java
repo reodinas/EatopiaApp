@@ -2,6 +2,7 @@ package com.reodinas2.eatopiaapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,20 +19,22 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.reodinas2.eatopiaapp.adapter.MenuAdapter;
 import com.reodinas2.eatopiaapp.api.NetworkClient;
 import com.reodinas2.eatopiaapp.api.RestaurantApi;
 import com.reodinas2.eatopiaapp.config.Config;
 import com.reodinas2.eatopiaapp.model.Menu;
-import com.reodinas2.eatopiaapp.model.MenuInfo;
-import com.reodinas2.eatopiaapp.model.Order;
-import com.reodinas2.eatopiaapp.model.OrderRes;
+import com.reodinas2.eatopiaapp.model.RestaurantOrder;
+import com.reodinas2.eatopiaapp.model.RestaurantOrderRes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +58,9 @@ public class OrderActivity extends AppCompatActivity {
     ArrayList<Menu> selectedMenuList;
     int people;
     int type = 0;
+    SimpleDateFormat sf;
+    SimpleDateFormat df;
+    String reservTimeUTC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +116,7 @@ public class OrderActivity extends AppCompatActivity {
         });
 
         btnOrder.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SimpleDateFormat")
             @Override
             public void onClick(View v) {
                 if (restaurantId == 0){
@@ -133,19 +140,45 @@ public class OrderActivity extends AppCompatActivity {
                 int minute = timePicker.getCurrentMinute();
                 // 날짜와 시간을 문자열 형식으로 변환
                 String reservTime = String.format("%04d-%02d-%02d %02d:%02d", year, month, day, hour, minute);
+                // Local Time => UTC
+                sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                sf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                df.setTimeZone(TimeZone.getDefault());
+
+                try {
+                    Date date = df.parse(reservTime);
+                    reservTimeUTC = sf.format(date);
+
+                } catch (ParseException e) {
+                    Toast.makeText(OrderActivity.this, "예약 시간 변환에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                    dismissProgress();
+                    Log.e("PARSE_ERROR", String.valueOf(e));
+                    return;
+                }
 
                 // Body
-                Order order = new Order(people, reservTime, type, selectedMenuList);
+                RestaurantOrder restaurantOrder = new RestaurantOrder(people, reservTimeUTC, type, selectedMenuList);
 
-                Call<OrderRes> call = api.makeOrder(accessToken, restaurantId, order);
+                Call<RestaurantOrderRes> call = api.makeOrder(accessToken, restaurantId, restaurantOrder);
 
-                call.enqueue(new Callback<OrderRes>() {
+                call.enqueue(new Callback<RestaurantOrderRes>() {
                     @Override
-                    public void onResponse(Call<OrderRes> call, Response<OrderRes> response) {
+                    public void onResponse(Call<RestaurantOrderRes> call, Response<RestaurantOrderRes> response) {
                         dismissProgress();
 
                         if(response.isSuccessful()){
                             Log.i("LOGCAT", "result: " + response.body().getResult() + ", 주문id: " + response.body().getOrderId());
+
+                            // 성공적으로 주문이 완료되면 OrderConfirmationActivity로 이동
+                            Intent intent = new Intent(OrderActivity.this, OrderConfirmationActivity.class);
+                            intent.putExtra("restaurantId", restaurantId);
+                            intent.putExtra("orderId", response.body().getOrderId());
+                            startActivity(intent);
+
+                            // 현재 액티비티를 종료
+                            finish();
+
 
                         }else {
                             Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
@@ -163,7 +196,7 @@ public class OrderActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<OrderRes> call, Throwable t) {
+                    public void onFailure(Call<RestaurantOrderRes> call, Throwable t) {
                         dismissProgress();
                         Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
                         Log.i("LOGCAT", String.valueOf(t));

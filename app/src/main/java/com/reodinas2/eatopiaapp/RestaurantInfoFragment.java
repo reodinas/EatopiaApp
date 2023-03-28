@@ -13,6 +13,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.reodinas2.eatopiaapp.model.Restaurant;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link RestaurantInfoFragment#newInstance} factory method to
@@ -71,6 +76,9 @@ public class RestaurantInfoFragment extends Fragment {
     TextView txtSummary;
     TextView txtUpdatedAt;
 
+    SimpleDateFormat sf; // UTC 타임존을 위한 변수
+    SimpleDateFormat df; // Local 타임존을 위한 변수
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,8 +95,12 @@ public class RestaurantInfoFragment extends Fragment {
         txtSummary = rootView.findViewById(R.id.txtSummary);
         txtUpdatedAt = rootView.findViewById(R.id.txtUpdatedAt);
 
+
+
+        // 액티비티에서 전달해준 restaurant 객체를 받는다.
         Restaurant restaurant = (Restaurant) getArguments().getSerializable("restaurant");
 
+        // 화면 세팅
         String imgUrl = restaurant.getImgUrl();
         Glide.with(getActivity())
                 .load(imgUrl)
@@ -104,14 +116,27 @@ public class RestaurantInfoFragment extends Fragment {
         String address = restaurant.getLocCity()+" "+restaurant.getLocDistrict()+" "+restaurant.getLocDetail();
         txtAddress.setText(address);
         txtTel.setText(restaurant.getTel());
-        String updatedAt = restaurant.getUpdatedAt().substring(0, 10);
-        txtUpdatedAt.setText(updatedAt);
-
         if(restaurant.getSummary() == null) {
             txtSummary.setText("소개를 준비중입니다.");
         }else{
             txtSummary.setText(restaurant.getSummary());
         }
+
+        // UTC => Local Time
+        String updatedAt = restaurant.getUpdatedAt();
+        sf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        sf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        df.setTimeZone(TimeZone.getDefault());
+        try {
+            Date date = sf.parse(updatedAt);
+            txtUpdatedAt.setText(df.format(date));
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
 
 
 

@@ -182,7 +182,7 @@
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
                 android:layout_toLeftOf="@id/txtUpdatedAt"
-                android:text="마지막 정보 수정일: "
+                android:text="마지막 정보 수정: "
                 android:textSize="12sp" />
 
             <TextView

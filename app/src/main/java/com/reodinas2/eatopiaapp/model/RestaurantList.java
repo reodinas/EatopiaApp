@@ -7,7 +7,6 @@ public class RestaurantList {
     private String result;
     private List<Restaurant> items;
     private int count;
-    private String error;
     private String message;
 
     public String getResult() {
@@ -32,14 +31,6 @@ public class RestaurantList {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 
     public String getMessage() {
