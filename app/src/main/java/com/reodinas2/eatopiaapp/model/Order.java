@@ -9,6 +9,7 @@ public class Order {
     private int type;
     private String createdAt;
     private int isVisited;
+    private int priceSum;
 
     public int getId() {
         return id;
@@ -72,5 +73,13 @@ public class Order {
 
     public void setIsVisited(int isVisited) {
         this.isVisited = isVisited;
+    }
+
+    public int getPriceSum() {
+        return priceSum;
+    }
+
+    public void setPriceSum(int priceSum) {
+        this.priceSum = priceSum;
     }
 }

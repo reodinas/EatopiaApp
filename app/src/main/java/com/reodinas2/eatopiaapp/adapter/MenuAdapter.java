@@ -123,11 +123,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             Menu selectedMenu = new Menu();
             selectedMenu.setId(menu.getId());
             selectedMenu.setRestaurantId(menu.getRestaurantId());
+            selectedMenu.setPrice(menu.getPrice());
+            selectedMenu.setCount(count);
 //            selectedMenu.setMenuName(menu.getMenuName());
-//            selectedMenu.setPrice(menu.getPrice());
 //            selectedMenu.setDescription(menu.getDescription());
 //            selectedMenu.setImgUrl(menu.getImgUrl());
-            selectedMenu.setCount(count);
             selectedMenuList.add(selectedMenu);
         }
     }
