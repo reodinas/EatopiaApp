@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,6 +12,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,13 +76,20 @@
                     android:orientation="vertical"
                     android:padding="16dp">
                     <!-- 각 예약 정보 항목은 여기에 추가하세요. 예를 들면: -->
-                    <TextView
-                        android:id="@+id/txtOrderId"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="주문번호: "
-                        android:textSize="16sp" />
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/txtOrderId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="주문번호: "
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/txtRestaurantName"
@@ -158,6 +165,7 @@
 
                     <!-- ... -->
                 </LinearLayout>
+
 
                 <Button
                     android:id="@+id/btnHome"
