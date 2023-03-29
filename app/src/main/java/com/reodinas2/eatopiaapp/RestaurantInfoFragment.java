@@ -106,7 +106,7 @@ public class RestaurantInfoFragment extends Fragment {
                 .load(imgUrl)
                 .placeholder(R.drawable.baseline_image_24)
                 .centerCrop()
-                .error(R.drawable.baseline_image_24)
+                .error(R.drawable.no_image)
                 .into(imgRestaurant);
 
         txtCategory.setText(restaurant.getCategory());
