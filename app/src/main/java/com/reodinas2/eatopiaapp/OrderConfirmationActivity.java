@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -112,6 +113,14 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             }
         }).start();
 
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OrderConfirmationActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
     }
 
@@ -126,22 +135,6 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             public void onResponse(Call<RestaurantRes> call, Response<RestaurantRes> response) {
                 if (response.isSuccessful()) {
                     restaurantInfo = response.body().getRestaurantInfo();
-
-                    // TODO: 응답에서 받은 식당 정보를 사용하여 UI를 업데이트하거나 필요한 작업을 수행합니다.
-                    // 화면 세팅
-//                    String imgUrl = restaurantInfo.getImgUrl();
-//                    Glide.with(OrderConfirmationActivity.this)
-//                            .load(imgUrl)
-//                            .placeholder(R.drawable.baseline_image_24)
-//                            .centerCrop()
-//                            .error(R.drawable.baseline_image_24)
-//                            .into(imgRestaurant);
-//
-//                    txtRestaurantName.setText(restaurantInfo.getName());
-//                    String address = restaurantInfo.getLocCity()+" "+restaurantInfo.getLocDistrict()+" "+restaurantInfo.getLocDetail();
-//                    txtAddress.setText(address);
-//                    txtTel.setText(restaurantInfo.getTel());
-
 
                     
                 } else {
@@ -187,11 +180,6 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     orderInfo = response.body().getOrderInfo();
                     menuInfo = response.body().getMenuInfo();
 
-                    // TODO: 응답에서 받은 주문 정보와 메뉴 정보를 사용하여 UI를 업데이트하거나 필요한 작업을 수행합니다.
-                    // 화면 세팅
-//                    txtPeople.setText(""+orderInfo.getPeople());
-//                    txtMenu.setText(menuInfo.get(0).getMenuName()+"외 "+menuInfo.size()+" 개");
-
 
                 } else {
                     Toast.makeText(OrderConfirmationActivity.this, "주문 정보를 가져오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -231,13 +219,13 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     .error(R.drawable.no_image)
                     .into(imgRestaurant);
 
-            txtRestaurantName.setText("식당명: " + restaurantInfo.getName());
+            txtRestaurantName.setText(restaurantInfo.getName());
             String address = restaurantInfo.getLocCity()+" "+restaurantInfo.getLocDistrict()+" "+restaurantInfo.getLocDetail();
-            txtAddress.setText("식당위치: " + address);
+            txtAddress.setText(address);
             txtTel.setText(restaurantInfo.getTel());
 
             // orderInfo
-            txtOrderId.setText("주문번호: "+orderInfo.getId());
+            txtOrderId.setText(""+orderInfo.getId());
             txtPeople.setText(String.valueOf(orderInfo.getPeople()));
 
             String priceText;
@@ -246,7 +234,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             }else {
                 priceText = String.valueOf(orderInfo.getPriceSum());
             }
-            txtPrice.setText("가격: " + priceText);
+            txtPrice.setText(priceText);
 
             String typeText;
             if (orderInfo.getType() == 1){
@@ -254,7 +242,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             } else {
                 typeText = "매장";
             }
-            txtType.setText("주문종류: " + typeText);
+            txtType.setText(typeText);
 
             // UTC => Local Time
             String reservTime = orderInfo.getReservTime();
