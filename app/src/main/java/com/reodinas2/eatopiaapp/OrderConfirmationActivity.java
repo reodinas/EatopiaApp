@@ -263,24 +263,25 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             }
 
             // menuInfo
-            StringBuilder menuText = new StringBuilder();
-            int menuCount = menuInfo.size();
-            int maxDisplayedMenus = Math.min(3, menuCount);
+//            // 3개의 메뉴까지만 이름, 수량을 표시하고 나머지는 "외 몇종" 으로 처리
+//            StringBuilder menuText = new StringBuilder();
+//            int menuCount = menuInfo.size();
+//            int maxDisplayedMenus = Math.min(3, menuCount);
+//
+//            for (int i = 0; i < maxDisplayedMenus; i++) {
+//                Menu menu = menuInfo.get(i);
+//                menuText.append(menu.getMenuName()).append(" ").append(menu.getCount()).append("개");
+//
+//                if (i < maxDisplayedMenus - 1) {
+//                    menuText.append(", ");
+//                }
+//            }
+//
+//            if (menuCount > 3) {
+//                menuText.append(" 외 ").append(menuCount - 3).append("종");
+//            }
 
-            for (int i = 0; i < maxDisplayedMenus; i++) {
-                Menu menu = menuInfo.get(i);
-                menuText.append(menu.getMenuName()).append(" ").append(menu.getCount()).append("개");
-
-                if (i < maxDisplayedMenus - 1) {
-                    menuText.append(", ");
-                }
-            }
-
-            if (menuCount > 3) {
-                menuText.append(" 외 ").append(menuCount - 3).append("종");
-            }
-
-            txtMenu.setText(menuText.toString());
+            txtMenu.setText(getMenuInfoString());
 
 
         } else {
@@ -289,6 +290,23 @@ public class OrderConfirmationActivity extends AppCompatActivity {
 
         dismissProgress();
 
+    }
+
+    // 메뉴 이름과 수량을 더한 문자열 생성
+    private String getMenuInfoString() {
+        StringBuilder menuInfoString = new StringBuilder();
+        int menuSize = menuInfo.size();
+
+        for (int i = 0; i < menuSize; i++) {
+            Menu menu = menuInfo.get(i);
+            menuInfoString.append(menu.getMenuName()).append(" ").append(menu.getCount()).append("개");
+
+            if (i != menuSize - 1) {
+                menuInfoString.append(", ");
+            }
+        }
+
+        return menuInfoString.toString();
     }
 
     // 네트워크 로직 처리시에 화면에 보여주는 함수

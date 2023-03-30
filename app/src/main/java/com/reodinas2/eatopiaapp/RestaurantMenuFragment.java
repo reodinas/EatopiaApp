@@ -91,6 +91,7 @@ public class RestaurantMenuFragment extends Fragment {
     RecyclerView recyclerView;
     MenuAdapter adapter;
     ArrayList<Menu> menuArrayList = new ArrayList<>();
+    Restaurant restaurant;
     int restaurantId;
     // 페이징 처리를 위한 변수
     int count = 0;
@@ -104,7 +105,7 @@ public class RestaurantMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_restaurant_menu, container, false);
 
-        Restaurant restaurant = (Restaurant) getArguments().getSerializable("restaurant");
+        restaurant = getArguments().getParcelable("restaurant");
         restaurantId = restaurant.getId();
 
         btnOrder = rootView.findViewById(R.id.btnOrder);

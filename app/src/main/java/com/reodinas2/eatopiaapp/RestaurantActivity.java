@@ -29,14 +29,14 @@ public class RestaurantActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
 
         // 인텐트로부터 Restaurant 객체 가져오기
-        Restaurant restaurant = (Restaurant) getIntent().getSerializableExtra("restaurant");
+        Restaurant restaurant = getIntent().getParcelableExtra("restaurant");
 
         // 식당이름을 세팅
         txtName.setText(restaurant.getName());
 
         // 프래그먼트에 Restaurant 객체 전달하기
         Bundle bundle = new Bundle();
-        bundle.putSerializable("restaurant", restaurant);
+        bundle.putParcelable("restaurant", restaurant);
 
         restaurantInfoFragment.setArguments(bundle);
         restaurantMenuFragment.setArguments(bundle);

@@ -98,7 +98,7 @@ public class RestaurantInfoFragment extends Fragment {
 
 
         // 액티비티에서 전달해준 restaurant 객체를 받는다.
-        Restaurant restaurant = (Restaurant) getArguments().getSerializable("restaurant");
+        Restaurant restaurant = getArguments().getParcelable("restaurant");
 
         // 화면 세팅
         String imgUrl = restaurant.getImgUrl();

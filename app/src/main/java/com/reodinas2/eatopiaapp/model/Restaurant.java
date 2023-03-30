@@ -1,8 +1,13 @@
 package com.reodinas2.eatopiaapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
-public class Restaurant implements Serializable {
+public class Restaurant implements Parcelable {
     private int id;
     private String name;
     private String category;
@@ -19,6 +24,8 @@ public class Restaurant implements Serializable {
     private String summary;
     private String createdAt;
     private String updatedAt;
+
+
 
     public int getId() {
         return id;
@@ -146,5 +153,63 @@ public class Restaurant implements Serializable {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+
+    // 생성자에서 Parcel 객체를 받아 멤버 변수 초기화
+    protected Restaurant(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        category = in.readString();
+        locCity = in.readString();
+        locDistrict = in.readString();
+        locDetail = in.readString();
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        imgUrl = in.readString();
+        cnt = in.readInt();
+        avg = in.readDouble();
+        distance = in.readInt();
+        tel = in.readString();
+        summary = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+    }
+
+    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
+        @Override
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        @Override
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeString(locCity);
+        dest.writeString(locDistrict);
+        dest.writeString(locDetail);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+        dest.writeString(imgUrl);
+        dest.writeInt(cnt);
+        dest.writeDouble(avg);
+        dest.writeInt(distance);
+        dest.writeString(tel);
+        dest.writeString(summary);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+
     }
 }

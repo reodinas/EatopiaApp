@@ -3,6 +3,7 @@ package com.reodinas2.eatopiaapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +61,7 @@ public class OrderActivity extends AppCompatActivity {
     int type = 0;
     SimpleDateFormat sf;
     SimpleDateFormat df;
+    String reservTime;
     String reservTimeUTC;
 
     @Override
@@ -116,21 +118,9 @@ public class OrderActivity extends AppCompatActivity {
         });
 
         btnOrder.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SimpleDateFormat")
+            @SuppressLint("DefaultLocale")
             @Override
             public void onClick(View v) {
-                if (restaurantId == 0){
-                    Toast.makeText(OrderActivity.this, "요청에 문제가 있습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                showProgress("주문 접수 중...");
-
-                Retrofit retrofit = NetworkClient.getRetrofitClient(OrderActivity.this);
-                RestaurantApi api = retrofit.create(RestaurantApi.class);
-
-                // 헤더에 들어갈 억세스토큰 가져온다.
-                SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
-                String accessToken = "Bearer " + sp.getString(Config.ACCESS_TOKEN, "");
 
                 // DatePicker와 TimePicker에서 날짜와 시간을 가져온다
                 int year = datePicker.getYear();
@@ -139,70 +129,120 @@ public class OrderActivity extends AppCompatActivity {
                 int hour = timePicker.getCurrentHour();
                 int minute = timePicker.getCurrentMinute();
                 // 날짜와 시간을 문자열 형식으로 변환
-                String reservTime = String.format("%04d-%02d-%02d %02d:%02d", year, month, day, hour, minute);
-                // Local Time => UTC
-                sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                sf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                df.setTimeZone(TimeZone.getDefault());
+                reservTime = String.format("%04d-%02d-%02d %02d:%02d", year, month, day, hour, minute);
 
-                try {
-                    Date date = df.parse(reservTime);
-                    reservTimeUTC = sf.format(date);
+                // 대화상자를 생성
+                AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                builder.setTitle("주문 하시겠습니까?");
+                builder.setMessage("예약시간: " + reservTime + "\n" +
+                        (type == 0 ? "인원: " + people + "\n" : "") +  // 인원수를 표시할지 결정
+                        "주문종류: " + (type == 0 ? "매장" : "포장") +
+                        "\n메뉴: " + getMenuInfoString());
+                builder.setPositiveButton("예", (dialog, which) -> {
+                    // '예'를 클릭했을 때 API 호출을 진행.
+                    makeOrder();
+                });
+                builder.setNegativeButton("아니오", (dialog, which) -> dialog.dismiss());
 
-                } catch (ParseException e) {
-                    Toast.makeText(OrderActivity.this, "예약 시간 변환에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                    dismissProgress();
-                    Log.e("PARSE_ERROR", String.valueOf(e));
-                    return;
+                // 대화상자를 표시
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+
+            }
+        });
+
+
+    }
+
+    // 메뉴 이름과 수량을 더한 문자열 생성
+    private String getMenuInfoString() {
+        StringBuilder menuInfoString = new StringBuilder();
+        int menuSize = selectedMenuList.size();
+
+        for (int i = 0; i < menuSize; i++) {
+            Menu menu = selectedMenuList.get(i);
+            menuInfoString.append(menu.getMenuName()).append(" ").append(menu.getCount()).append("개");
+
+            if (i != menuSize - 1) {
+                menuInfoString.append(", ");
+            }
+        }
+
+        return menuInfoString.toString();
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void makeOrder() {
+        showProgress("주문 접수 중...");
+
+        Retrofit retrofit = NetworkClient.getRetrofitClient(OrderActivity.this);
+        RestaurantApi api = retrofit.create(RestaurantApi.class);
+
+        // 헤더에 들어갈 억세스토큰 가져온다.
+        SharedPreferences sp = getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
+        String accessToken = "Bearer " + sp.getString(Config.ACCESS_TOKEN, "");
+
+        // Local Time => UTC
+        sf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        sf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        df.setTimeZone(TimeZone.getDefault());
+
+        try {
+            Date date = df.parse(reservTime);
+            reservTimeUTC = sf.format(date);
+
+        } catch (ParseException e) {
+            Toast.makeText(OrderActivity.this, "예약 시간 변환에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+            dismissProgress();
+            Log.e("PARSE_ERROR", String.valueOf(e));
+            return;
+        }
+
+        // Body
+        RestaurantOrder restaurantOrder = new RestaurantOrder(people, reservTimeUTC, type, selectedMenuList);
+
+        Call<RestaurantOrderRes> call = api.makeOrder(accessToken, restaurantId, restaurantOrder);
+
+        call.enqueue(new Callback<RestaurantOrderRes>() {
+            @Override
+            public void onResponse(Call<RestaurantOrderRes> call, Response<RestaurantOrderRes> response) {
+                dismissProgress();
+
+                if(response.isSuccessful()){
+                    Log.i("LOGCAT", "result: " + response.body().getResult() + ", 주문id: " + response.body().getOrderId());
+
+                    // 성공적으로 주문이 완료되면 OrderConfirmationActivity로 이동
+                    Intent intent = new Intent(OrderActivity.this, OrderConfirmationActivity.class);
+                    intent.putExtra("restaurantId", restaurantId);
+                    intent.putExtra("orderId", response.body().getOrderId());
+                    startActivity(intent);
+
+                    // 현재 액티비티를 종료
+                    finish();
+
+
+                }else {
+                    Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        JSONObject errorJson = new JSONObject(response.errorBody().string());
+                        String errorMessage = errorJson.getString("error");
+                        Toast.makeText(OrderActivity.this, "" + errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.i("LOGCAT", "에러 상태코드: " + response.code() + ", 메시지: " + errorMessage);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                // Body
-                RestaurantOrder restaurantOrder = new RestaurantOrder(people, reservTimeUTC, type, selectedMenuList);
+            }
 
-                Call<RestaurantOrderRes> call = api.makeOrder(accessToken, restaurantId, restaurantOrder);
-
-                call.enqueue(new Callback<RestaurantOrderRes>() {
-                    @Override
-                    public void onResponse(Call<RestaurantOrderRes> call, Response<RestaurantOrderRes> response) {
-                        dismissProgress();
-
-                        if(response.isSuccessful()){
-                            Log.i("LOGCAT", "result: " + response.body().getResult() + ", 주문id: " + response.body().getOrderId());
-
-                            // 성공적으로 주문이 완료되면 OrderConfirmationActivity로 이동
-                            Intent intent = new Intent(OrderActivity.this, OrderConfirmationActivity.class);
-                            intent.putExtra("restaurantId", restaurantId);
-                            intent.putExtra("orderId", response.body().getOrderId());
-                            startActivity(intent);
-
-                            // 현재 액티비티를 종료
-                            finish();
-
-
-                        }else {
-                            Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
-
-                            try {
-                                JSONObject errorJson = new JSONObject(response.errorBody().string());
-                                String errorMessage = errorJson.getString("error");
-                                Toast.makeText(OrderActivity.this, "" + errorMessage, Toast.LENGTH_SHORT).show();
-                                Log.i("LOGCAT", "에러 상태코드: " + response.code() + ", 메시지: " + errorMessage);
-                            } catch (IOException | JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<RestaurantOrderRes> call, Throwable t) {
-                        dismissProgress();
-                        Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
-                        Log.i("LOGCAT", String.valueOf(t));
-                    }
-                });
-
+            @Override
+            public void onFailure(Call<RestaurantOrderRes> call, Throwable t) {
+                dismissProgress();
+                Toast.makeText(OrderActivity.this, "정상적으로 처리되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                Log.i("LOGCAT", String.valueOf(t));
             }
         });
 
