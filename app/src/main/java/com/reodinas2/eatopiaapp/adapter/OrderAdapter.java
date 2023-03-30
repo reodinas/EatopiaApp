@@ -119,9 +119,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder>{
         if (isVisited == 0) {
             holder.txtIsVisited.setText("미방문");
             holder.txtIsVisited.setTextColor(ContextCompat.getColor(context, R.color.fail_color));
+            // 리뷰 작성 버튼 숨기기
+            holder.btnReview.setVisibility(View.GONE);
         } else {
             holder.txtIsVisited.setText("방문");
             holder.txtIsVisited.setTextColor(ContextCompat.getColor(context, R.color.success_color));
+            // 리뷰 작성 버튼 보이기
+            holder.btnReview.setVisibility(View.VISIBLE);
         }
 
         // 메뉴

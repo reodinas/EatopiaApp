@@ -40,7 +40,8 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
                     android:text="리뷰 작성"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
