@@ -108,7 +108,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         boolean itemExists = false;
 
         for (Menu selectedMenu : selectedMenuList) {
-            if (selectedMenu.getId() == menu.getId()) {
+            if (selectedMenu.getMenuId() == menu.getMenuId()) {
                 if (count == 0) {
                     selectedMenuList.remove(selectedMenu);
                 } else {
@@ -121,7 +121,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         if (!itemExists && count > 0) {
             Menu selectedMenu = new Menu();
-            selectedMenu.setId(menu.getId());
+            selectedMenu.setMenuId(menu.getMenuId());
             selectedMenu.setRestaurantId(menu.getRestaurantId());
             selectedMenu.setPrice(menu.getPrice());
             selectedMenu.setCount(count);

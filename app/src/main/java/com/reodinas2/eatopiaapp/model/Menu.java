@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 public class Menu implements Parcelable {
-    private int id;
+    private int menuId;
     private int restaurantId;
     private String menuName;
     private int price;
@@ -23,7 +23,7 @@ public class Menu implements Parcelable {
 
     // Parcelable 인터페이스 구현
     protected Menu(Parcel in) {
-        id = in.readInt();
+        menuId = in.readInt();
         restaurantId = in.readInt();
         menuName = in.readString();
         price = in.readInt();
@@ -53,7 +53,7 @@ public class Menu implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeInt(menuId);
         dest.writeInt(restaurantId);
         dest.writeString(menuName);
         dest.writeInt(price);
@@ -66,12 +66,12 @@ public class Menu implements Parcelable {
 
 
     // getter/setter
-    public int getId() {
-        return id;
+    public int getMenuId() {
+        return menuId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMenuId(int id) {
+        this.menuId = id;
     }
 
     public int getRestaurantId() {

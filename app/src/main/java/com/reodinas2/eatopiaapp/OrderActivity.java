@@ -86,8 +86,8 @@ public class OrderActivity extends AppCompatActivity {
         restaurantId = intent.getIntExtra("restaurantId", 0);
         selectedMenuList  = intent.getParcelableArrayListExtra("selectedMenuList");
 
-        Log.i("SelectedMenuList", "menuName: " + selectedMenuList.get(selectedMenuList.size()-1).getMenuName());
-        Log.i("SelectedMenuList", "count: " + selectedMenuList.get(selectedMenuList.size()-1).getCount());
+//        Log.i("SelectedMenuList", "menuName: " + selectedMenuList.get(selectedMenuList.size()-1).getMenuName());
+//        Log.i("SelectedMenuList", "count: " + selectedMenuList.get(selectedMenuList.size()-1).getCount());
 
         // 매장인 경우 0, 포장인 경우 1
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
