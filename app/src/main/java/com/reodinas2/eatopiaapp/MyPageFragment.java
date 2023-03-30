@@ -3,6 +3,7 @@ package com.reodinas2.eatopiaapp;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -113,8 +114,17 @@ public class MyPageFragment extends Fragment {
         btnMyFavorite = rootView.findViewById(R.id.btnMyFavorite);
         btnAddFace = rootView.findViewById(R.id.btnAddFace);
         progressBar = rootView.findViewById(R.id.progressBar);
-
+        // 회원정보 세팅
         getUserInfo();
+
+        // 주문내역 액티비티 전환
+        btnMyOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MyOrderListActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -124,7 +134,7 @@ public class MyPageFragment extends Fragment {
         Retrofit retrofit = NetworkClient.getRetrofitClient(getActivity());
         UserApi api = retrofit.create(UserApi.class);
 
-        // 헤더에 들어갈 액세스 토큰을 가져옵니다.
+        // 헤더에 들어갈 액세스 토큰을 가져온다
         SharedPreferences sp = getActivity().getSharedPreferences(Config.SP_NAME, MODE_PRIVATE);
         String accessToken = "Bearer " + sp.getString(Config.ACCESS_TOKEN, "");
 

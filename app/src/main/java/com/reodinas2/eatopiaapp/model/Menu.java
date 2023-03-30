@@ -14,7 +14,6 @@ public class Menu implements Parcelable {
     private String imgUrl;
     private String createdAt;
     private String updatedAt;
-
     // 메뉴수량
     private int count;
 
