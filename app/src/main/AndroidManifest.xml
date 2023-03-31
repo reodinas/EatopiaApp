@@ -22,7 +22,9 @@
         android:theme="@style/Theme.EatopiaApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".MyOrderDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".MyOrderListActivity"
             android:exported="false" />

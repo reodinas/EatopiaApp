@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -75,6 +76,7 @@ public class RestaurantInfoFragment extends Fragment {
     TextView txtTel;
     TextView txtSummary;
     TextView txtUpdatedAt;
+    Button btnMenu;
 
     SimpleDateFormat sf; // UTC 타임존을 위한 변수
     SimpleDateFormat df; // Local 타임존을 위한 변수
@@ -94,11 +96,14 @@ public class RestaurantInfoFragment extends Fragment {
         txtTel = rootView.findViewById(R.id.txtTel);
         txtSummary = rootView.findViewById(R.id.txtSummary);
         txtUpdatedAt = rootView.findViewById(R.id.txtUpdatedAt);
+        btnMenu = rootView.findViewById(R.id.btnMenu);
 
 
 
         // 액티비티에서 전달해준 restaurant 객체를 받는다.
         Restaurant restaurant = getArguments().getParcelable("restaurant");
+        // 액티비티에서 전달해준 from 값을 받는다.
+        String from = getArguments().getString("from");
 
         // 화면 세팅
         String imgUrl = restaurant.getImgUrl();
@@ -110,7 +115,15 @@ public class RestaurantInfoFragment extends Fragment {
                 .into(imgRestaurant);
 
         txtCategory.setText(restaurant.getCategory());
-        txtDistance.setText(restaurant.getDistance()+"m");
+
+        // "from" 값에 따라 txtDistance 출력 여부 결정
+        if ("home".equals(from)) {
+            txtDistance.setVisibility(View.VISIBLE);
+            txtDistance.setText(restaurant.getDistance() + "m");
+        } else if ("order".equals(from)) {
+            txtDistance.setVisibility(View.GONE);
+        }
+
         txtAvg.setText(""+restaurant.getAvg());
         txtCnt.setText(""+restaurant.getCnt());
         String address = restaurant.getLocCity()+" "+restaurant.getLocDistrict()+" "+restaurant.getLocDetail();
@@ -137,7 +150,23 @@ public class RestaurantInfoFragment extends Fragment {
         }
 
 
-
+//        btnMenu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                RestaurantMenuFragment restaurantMenuFragment = new RestaurantMenuFragment();
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelable("restaurant", getArguments().getParcelable("restaurant"));
+//                restaurantMenuFragment.setArguments(bundle);
+//
+//                getActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.container, restaurantMenuFragment)
+//                        .addToBackStack(null)
+//                        .commit();
+//            }
+//        });
 
 
         return rootView;

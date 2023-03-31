@@ -107,40 +107,48 @@
                         android:id="@+id/btnMyOrder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:backgroundTint="#FFFFFF"
                         android:gravity="center|left"
-                        android:text="📌 주문 내역 확인"
-                        android:textColor="#434343" />
+                        android:text="📌 주문 내역"
+                        android:textColor="#434343"
+                        android:textSize="18sp" />
 
                     <Button
                         android:id="@+id/btnMyReview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
                         android:backgroundTint="#FFFFFF"
                         android:gravity="center|left"
                         android:text="📝 리뷰 관리"
-                        android:textColor="#434343" />
+                        android:textColor="#434343"
+                        android:textSize="18sp" />
 
                     <Button
                         android:id="@+id/btnMyFavorite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
                         android:backgroundTint="#FFFFFF"
                         android:gravity="center|left"
-                        android:text="⭐ 나의 즐겨찾기"
-                        android:textColor="#434343" />
+                        android:text="⭐ 즐겨찾기"
+                        android:textColor="#434343"
+                        android:textSize="18sp" />
 
                     <Button
                         android:id="@+id/btnAddFace"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
                         android:backgroundTint="#FFFFFF"
                         android:gravity="center|left"
                         android:text="🫠 얼굴사진 등록"
-                        android:textColor="#434343" />
+                        android:textColor="#434343"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <TextView

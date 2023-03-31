@@ -30,13 +30,16 @@ public class RestaurantActivity extends AppCompatActivity {
 
         // 인텐트로부터 Restaurant 객체 가져오기
         Restaurant restaurant = getIntent().getParcelableExtra("restaurant");
+        // 이동 경로 가져오기
+        String from = getIntent().getStringExtra("from");
 
         // 식당이름을 세팅
         txtName.setText(restaurant.getName());
 
-        // 프래그먼트에 Restaurant 객체 전달하기
+        // 프래그먼트에 Restaurant 객체와 이동경로 전달하기
         Bundle bundle = new Bundle();
         bundle.putParcelable("restaurant", restaurant);
+        bundle.putString("from", from);
 
         restaurantInfoFragment.setArguments(bundle);
         restaurantMenuFragment.setArguments(bundle);

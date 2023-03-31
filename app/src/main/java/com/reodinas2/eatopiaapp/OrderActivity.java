@@ -57,7 +57,7 @@ public class OrderActivity extends AppCompatActivity {
     Button btnOrder;
     ProgressDialog dialog;
     ArrayList<Menu> selectedMenuList;
-    int people;
+    int people = 1;
     int type = 0;
     SimpleDateFormat sf;
     SimpleDateFormat df;

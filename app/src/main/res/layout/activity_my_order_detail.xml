@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OrderConfirmationActivity">
+    tools:context=".MyOrderDetailActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,12 +33,13 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:text="주문정보 확인"
+                    android:text="주문내역"
                     android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/restaurantLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -53,14 +54,14 @@
 
                 <TextView
                     android:id="@+id/txtRestaurantName"
-                    android:layout_width="250dp"
+                    android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/rounded_border"
                     android:gravity="center"
-                    android:text="주문이 완료되었습니다."
-                    android:textSize="20sp" />
+                    android:text="식당 이름"
+                    android:textColor="#444968"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -109,7 +110,7 @@
                             android:id="@+id/textView7"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="식당 이름: "
+                            android:text="방문 여부: "
                             android:textSize="16sp"
                             android:textStyle="bold" />
 

@@ -2,6 +2,7 @@ package com.reodinas2.eatopiaapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.reodinas2.eatopiaapp.MyOrderDetailActivity;
 import com.reodinas2.eatopiaapp.R;
+import com.reodinas2.eatopiaapp.RestaurantActivity;
 import com.reodinas2.eatopiaapp.model.Menu;
 import com.reodinas2.eatopiaapp.model.MyOrder;
 import com.reodinas2.eatopiaapp.model.Order;
@@ -109,7 +112,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder>{
         int priceSum = orderInfo.getPriceSum();
         if (priceSum == -1) {
             holder.txtPriceSum.setText("가격 정보 없음");
-            holder.txtPriceSum.setTextColor(ContextCompat.getColor(context, R.color.fail_color));
         } else {
             holder.txtPriceSum.setText(String.valueOf(priceSum));
         }
@@ -169,6 +171,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder>{
             txtPriceSum = itemView.findViewById(R.id.txtPriceSum);
             txtCreatedAt = itemView.findViewById(R.id.txtCreatedAt);
             txtIsVisited = itemView.findViewById(R.id.txtIsVisited);
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int index = getAdapterPosition();
+                    MyOrder myOrder = myOrderArrayList.get(index);
+
+                    Intent intent = new Intent(context, MyOrderDetailActivity.class);
+                    intent.putExtra("myOrder", myOrder);
+                    context.startActivity(intent);
+
+                }
+            });
+
         }
     }
 

@@ -100,6 +100,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
                     Intent intent = new Intent(context, RestaurantActivity.class);
                     intent.putExtra("restaurant", restaurant);
+                    intent.putExtra("from", "home");
                     context.startActivity(intent);
 
                 }

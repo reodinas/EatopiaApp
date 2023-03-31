@@ -74,7 +74,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
 
         imgRestaurant = findViewById(R.id.imgRestaurant);
         txtOrderId = findViewById(R.id.txtOrderId);
-        txtRestaurantName = findViewById(R.id.txtRestaurantName);
+        txtRestaurantName = findViewById(R.id.txtIsVisited);
         txtMenu = findViewById(R.id.txtMenu);
         txtPrice = findViewById(R.id.txtPrice);
         txtReservTime = findViewById(R.id.txtReservTime);
@@ -261,25 +261,6 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
-
-            // menuInfo
-//            // 3개의 메뉴까지만 이름, 수량을 표시하고 나머지는 "외 몇종" 으로 처리
-//            StringBuilder menuText = new StringBuilder();
-//            int menuCount = menuInfo.size();
-//            int maxDisplayedMenus = Math.min(3, menuCount);
-//
-//            for (int i = 0; i < maxDisplayedMenus; i++) {
-//                Menu menu = menuInfo.get(i);
-//                menuText.append(menu.getMenuName()).append(" ").append(menu.getCount()).append("개");
-//
-//                if (i < maxDisplayedMenus - 1) {
-//                    menuText.append(", ");
-//                }
-//            }
-//
-//            if (menuCount > 3) {
-//                menuText.append(" 외 ").append(menuCount - 3).append("종");
-//            }
 
             txtMenu.setText(getMenuInfoString());
 

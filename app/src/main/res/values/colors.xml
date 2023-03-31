@@ -9,8 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="sky_blue">#00b0ff</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="past_color">#E91E63</color>
+    <color name="past_color">#DA5B86</color>
     <color name="future_color">#009688</color>
-    <color name="fail_color">#D63C31</color>
+    <color name="fail_color">#D83C31</color>
     <color name="success_color">#495FDA</color>
+    <color name="salmon">#d3e8dd</color>
+    <color name="alise_blue">#F5F5F5</color>
 </resources>

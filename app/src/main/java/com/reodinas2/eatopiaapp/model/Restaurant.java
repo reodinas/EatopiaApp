@@ -204,7 +204,7 @@ public class Restaurant implements Parcelable {
         dest.writeDouble(latitude);
         dest.writeString(imgUrl);
         dest.writeInt(cnt);
-        dest.writeDouble(avg);
+        dest.writeDouble(avg != null ? avg : 0.0); // avg에 대한 null 처리
         dest.writeInt(distance);
         dest.writeString(tel);
         dest.writeString(summary);
