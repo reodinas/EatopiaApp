@@ -174,22 +174,13 @@
                 android:text="식당 소개"
                 android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/btnMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txtSummary"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
-                android:text="메뉴 고르러 가기" />
-
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btnMenu"
+                android:layout_below="@id/txtSummary"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
                 android:layout_toLeftOf="@id/txtUpdatedAt"
                 android:text="마지막 정보 수정: "
@@ -199,10 +190,10 @@
                 android:id="@+id/txtUpdatedAt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btnMenu"
+                android:layout_below="@id/txtSummary"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
                 android:text="시간"
                 android:textSize="12sp" />

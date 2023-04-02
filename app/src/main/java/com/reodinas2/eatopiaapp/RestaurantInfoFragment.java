@@ -1,7 +1,9 @@
 package com.reodinas2.eatopiaapp;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -76,7 +78,6 @@ public class RestaurantInfoFragment extends Fragment {
     TextView txtTel;
     TextView txtSummary;
     TextView txtUpdatedAt;
-    Button btnMenu;
 
     SimpleDateFormat sf; // UTC 타임존을 위한 변수
     SimpleDateFormat df; // Local 타임존을 위한 변수
@@ -96,7 +97,6 @@ public class RestaurantInfoFragment extends Fragment {
         txtTel = rootView.findViewById(R.id.txtTel);
         txtSummary = rootView.findViewById(R.id.txtSummary);
         txtUpdatedAt = rootView.findViewById(R.id.txtUpdatedAt);
-        btnMenu = rootView.findViewById(R.id.btnMenu);
 
 
 
@@ -108,6 +108,7 @@ public class RestaurantInfoFragment extends Fragment {
         // 화면 세팅
         String imgUrl = restaurant.getImgUrl();
         Glide.with(getActivity())
+
                 .load(imgUrl)
                 .placeholder(R.drawable.baseline_image_24)
                 .centerCrop()
@@ -148,25 +149,6 @@ public class RestaurantInfoFragment extends Fragment {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-
-
-//        btnMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                RestaurantMenuFragment restaurantMenuFragment = new RestaurantMenuFragment();
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelable("restaurant", getArguments().getParcelable("restaurant"));
-//                restaurantMenuFragment.setArguments(bundle);
-//
-//                getActivity().getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.container, restaurantMenuFragment)
-//                        .addToBackStack(null)
-//                        .commit();
-//            }
-//        });
 
 
         return rootView;
