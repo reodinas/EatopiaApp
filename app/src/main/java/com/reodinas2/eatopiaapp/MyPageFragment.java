@@ -1,5 +1,6 @@
 package com.reodinas2.eatopiaapp;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.ProgressDialog;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.reodinas2.eatopiaapp.api.NetworkClient;
 import com.reodinas2.eatopiaapp.api.OrderApi;
@@ -96,6 +99,9 @@ public class MyPageFragment extends Fragment {
     ProgressBar progressBar;
     ProgressDialog dialog;
 
+    String imgUrl;
+
+    private static final int REQUEST_ADD_FACE = 10001;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,6 +120,7 @@ public class MyPageFragment extends Fragment {
         btnMyFavorite = rootView.findViewById(R.id.btnMyFavorite);
         btnAddFace = rootView.findViewById(R.id.btnAddFace);
         progressBar = rootView.findViewById(R.id.progressBar);
+
         // 회원정보 세팅
         getUserInfo();
 
@@ -126,7 +133,30 @@ public class MyPageFragment extends Fragment {
             }
         });
 
+        // 얼굴등록 액티비티 전환
+        btnAddFace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AddFaceActivity.class);
+
+                if (imgUrl != null && !imgUrl.isEmpty()) {
+                    intent.putExtra("imgUrl", imgUrl);
+                }
+
+                startActivityForResult(intent, REQUEST_ADD_FACE);
+            }
+        });
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_ADD_FACE && resultCode == RESULT_OK) {
+            getUserInfo();
+        }
     }
 
     private void getUserInfo() {
@@ -155,12 +185,14 @@ public class MyPageFragment extends Fragment {
                     txtEmail.animate().alpha(1f).setDuration(300);
 
 
-                    String imgUrl = response.body().getImgUrl();
+                    imgUrl = response.body().getImgUrl();
                     Glide.with(getActivity())
                             .load(imgUrl)
                             .placeholder(R.drawable.baseline_person_24)
                             .transition(DrawableTransitionOptions.withCrossFade(300)) // Glide에도 애니메이션 적용
                             .centerCrop()
+                            .skipMemoryCache(true) // 메모리 캐시 건너뛰기
+                            .diskCacheStrategy(DiskCacheStrategy.NONE) // 디스크 캐시 건너뛰기
                             .error(R.drawable.baseline_person_24)
                             .into(imgFace);
 
