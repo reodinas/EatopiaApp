@@ -13,13 +13,6 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_back" />
-
         <TextView
             android:id="@+id/reservation_list_title"
             android:layout_width="0dp"

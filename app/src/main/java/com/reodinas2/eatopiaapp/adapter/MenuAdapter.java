@@ -60,6 +60,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         }
 
         String imgUrl = menu.getImgUrl();
+
         Glide.with(context)
                 .load(imgUrl)
                 .placeholder(R.drawable.baseline_image_24)

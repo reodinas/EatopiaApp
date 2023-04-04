@@ -222,6 +222,7 @@ public class AddFaceActivity extends AppCompatActivity {
                 }
             }
 
+
             @Override
             public void onFailure(Call<Res> call, Throwable t) {
 

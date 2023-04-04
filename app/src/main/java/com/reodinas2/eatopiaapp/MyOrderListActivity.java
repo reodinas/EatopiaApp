@@ -38,8 +38,6 @@ import retrofit2.Retrofit;
 
 public class MyOrderListActivity extends AppCompatActivity {
 
-    ImageButton btnBack;
-
     RecyclerView recyclerView;
     OrderAdapter adapter;
     ArrayList<MyOrder> myOrderArrayList = new ArrayList<>();
@@ -57,8 +55,6 @@ public class MyOrderListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_order_list);
-
-        btnBack = findViewById(R.id.btnBack);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
